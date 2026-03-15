@@ -100,13 +100,27 @@ def user_input(user_question):
             
             response = model.invoke(final_prompt)
             
+            # Newer Gemini models return content as a list of blocks, not a plain string
             if response and response.content:
-                status.update(label="Answer generated!", state="complete")
-                st.write("### Response:")
-                st.success(response.content)
+                if isinstance(response.content, list):
+                    # Extract text from each block in the list
+                    answer = "\n".join(
+                        block.get("text", "") if isinstance(block, dict) else str(block)
+                        for block in response.content
+                    ).strip()
+                else:
+                    answer = str(response.content).strip()
+                
+                if answer:
+                    status.update(label="Answer generated!", state="complete")
+                    st.write("### Response:")
+                    st.success(answer)
+                else:
+                    status.update(label="No answer generated.", state="error")
+                    st.warning("The AI could not generate a response.")
             else:
-                status.update(label="Failed to generate answer.", state="error")
-                st.warning("The AI could not generate a response.")
+                status.update(label="No answer generated.", state="error")
+                st.warning("The AI returned an empty response.")
                 
     except Exception as e:
         st.error(f"Search flow failed: {e}")
