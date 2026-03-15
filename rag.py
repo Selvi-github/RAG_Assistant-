@@ -5,7 +5,7 @@ import os
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
 import google.generativeai as genai 
 from langchain_community.vectorstores import FAISS 
-from langchain.prompts import PromptTemplate
+from langchain_core.prompts import PromptTemplate
 from dotenv import load_dotenv 
 
 # Load environment variables at the top level
